@@ -13,7 +13,13 @@ sources:
     baseUrl: "http://host.docker.internal:8000"
     headers:
       Content-Type: "application/json"
-
+  my-mysql-source:
+    kind: mysql
+    host: mysql-db
+    port: 3306        
+    database: test
+    user: toolbox  
+    password: toolbox_pass
 tools:
   get_user_profile:
     kind: mongodb-find-one
@@ -51,3 +57,13 @@ tools:
         "query": "TURBINE VENTILATION M",
         "size": 1
       }
+  get_products_by_type:
+    kind: mysql-sql
+    source: my-mysql-source
+    description: Retrieve products by type
+    statement: |
+      SELECT * FROM product WHERE type = 'jersey';
+    parameters:
+      - name: type
+        type: string
+        description: Type of product (e.g., jersey, jewelry)

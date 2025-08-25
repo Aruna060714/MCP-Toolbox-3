@@ -12,6 +12,9 @@ services:
       - ./.env
     command:
       ["toolbox", "--tools-file", "/config/tools.yaml", "--address", "0.0.0.0"]
+    depends_on:
+      - mysql
+      - mongodb
   mongodb:
     image: mongo:7.0
     container_name: mongodb
@@ -23,5 +26,13 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: abc123
+      MYSQL_DATABASE: test
+      MYSQL_USER: toolbox
+      MYSQL_PASSWORD: toolbox_pass
 volumes:
   mongo-data:
