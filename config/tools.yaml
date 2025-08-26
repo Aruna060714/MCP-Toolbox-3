@@ -15,11 +15,11 @@ sources:
       Content-Type: "application/json"
   my-mysql-source:
     kind: mysql
-    host: mysql-db
-    port: 3306        
-    database: test
-    user: toolbox  
-    password: toolbox_pass
+    host: ${MYSQL_HOST}
+    port: ${MYSQL_PORT}        
+    database: ${MYSQL_DATABASE}
+    user: ${MYSQL_USER}  
+    password: ${MYSQL_PASSWORD}
 tools:
   get_user_profile:
     kind: mongodb-find-one
