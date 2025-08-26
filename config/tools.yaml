@@ -1,0 +1,69 @@
+sources:
+  my-mongodb:
+    kind: mongodb
+    uri: ${MONGODB_URI}
+  my-supabase:
+    kind: http
+    baseUrl: ${SUPABASE_URL}
+    headers:
+      apikey: ${SUPABASE_API_KEY}
+      Authorization: "Bearer ${SUPABASE_API_KEY}"
+  my-opensearch-api:
+    kind: http
+    baseUrl: "http://host.docker.internal:8000"
+    headers:
+      Content-Type: "application/json"
+  my-mysql-source:
+    kind: mysql
+    host: ${MYSQL_HOST}
+    port: ${MYSQL_PORT}        
+    database: ${MYSQL_DATABASE}
+    user: ${MYSQL_USER}  
+    password: ${MYSQL_PASSWORD}
+tools:
+  get_user_profile:
+    kind: mongodb-find-one
+    source: my-mongodb
+    description: Retrieves a user's profile by their email address.
+    database: test
+
+    collection: user
+    filterPayload: |
+      { "email": {{json .email}} }
+    filterParams:
+      - name: email
+        type: string
+        description: The email address of the user to find.
+  get_product_by_ref:
+    kind: http
+    source: my-supabase
+    description: Fetch product details from Supabase by ref
+    path: "/rest/v1/products_new2?select=*&ref=eq.22361020" 
+    method: GET
+  get_product_by_barcode:
+    kind: http
+    source: my-supabase
+    description: Fetch product details from Supabase by barcode
+    path: "/rest/v1/products_new2?select=*&barcode=eq.3664142565604"  
+    method: GET
+  search_products:
+    kind: http
+    source: my-opensearch-api
+    description: Search products via OpenSearch API by product title
+    method: POST
+    path: "/search"
+    requestBody: |
+      {
+        "query": "TURBINE VENTILATION M",
+        "size": 1
+      }
+  get_products_by_type:
+    kind: mysql-sql
+    source: my-mysql-source
+    description: Retrieve products by type
+    statement: |
+      SELECT * FROM product WHERE type = 'jersey';
+    parameters:
+      - name: type
+        type: string
+        description: Type of product (e.g., jersey, jewelry)
