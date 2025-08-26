@@ -62,7 +62,7 @@ tools:
     source: my-mysql-source
     description: Retrieve products by type
     statement: |
-      SELECT * FROM product WHERE type = 'jersey';
+      SELECT * FROM products WHERE type = ?
     parameters:
       - name: type
         type: string
