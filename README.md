@@ -1,24 +1,27 @@
 ## MongoDB & Supabase Toolbox
-This project demonstrates how to build a MongoDB, Supabase, and OpenSearch-backed tool system using the Toolbox framework. It allows you to query MongoDB databases, Supabase REST API, and OpenSearch through a Toolbox server, with tools defined in a YAML configuration file (tools.yaml).
+This project demonstrates how to build a MongoDB, Supabase, OpenSearch, and MySQL-backed tool system using the Toolbox framework. It allows you to query MongoDB databases, Supabase REST API, OpenSearch, and MySQL through a Toolbox server, with tools defined in a YAML configuration file (tools.yaml).
 ## Project Structure
     .
     ├── toolbox.py            # Client script that connects to Toolbox server for MongoDB queries
     ├── supabase.py           # Client script that connects to Toolbox server for Supabase queries
     ├── opensearch.py         # Client script that connects to Toolbox server for OpenSearch queries
+    ├── mysql.py              # Client script that connects to Toolbox server for MySQL product queries
     ├── api_opensearch.py     # FastAPI server for OpenSearch product search
-    ├── tools.yaml            # Toolbox configuration (sources + tools for MongoDB, Supabase, and OpenSearch)
-    ├── docker-compose.yaml   # Docker config to run MongoDB + Toolbox server
+    ├── tools.yaml            # Toolbox configuration (sources + tools for MongoDB, Supabase, OpenSearch, MySQL)
+    ├── docker-compose.yaml   # Docker config to run MongoDB, MySQL, and Toolbox server
     └── .env                  # Environment variables (create from .env.example)
 ## Data Sources
 - **MongoDB**: Stores user data (email, name, etc.)
 - **Supabase**: Stores product data with REST API endpoints
 - **OpenSearch**: Provides search capabilities for product data via FastAPI
+- **MySQL**: Stores product details, allows fetching products by type
 
 ## Available Tools
 1. **get_user_profile**: Query MongoDB for user profiles by email address
 2. **get_product_by_ref**: Fetch product details from Supabase by product reference
 3. **get_product_by_barcode**: Fetch product details from Supabase by barcode
 4. **search_products**: Search products in OpenSearch by title, category, or description
+5. **get_products_by_type**: Query MySQL to fetch products by their type
 
 ## Workflow Overview
 1. MongoDB stores user data, Supabase stores product data
@@ -28,6 +31,7 @@ This project demonstrates how to build a MongoDB, Supabase, and OpenSearch-backe
 5. supabase.py → connects to Toolbox server for Supabase product queries
 6. opensearch.py → connects to Toolbox server for OpenSearch product searches
 7. api_opensearch.py → FastAPI server that interfaces with OpenSearch
+8. mysql.py → connects to Toolbox server for MySQL product queries
 
 ## Environment Variables (.env file)
 Create a `.env` file in the project root with the following variables:
@@ -45,6 +49,13 @@ OPENSEARCH_HOST=<your-opensearch-host>
 OPENSEARCH_PORT=443
 OPENSEARCH_USER=admin
 OPENSEARCH_PASS=admin
+
+# MySQL Configuration
+MYSQL_HOST=
+MYSQL_PORT=3306
+MYSQL_DATABASE=
+MYSQL_USER=
+MYSQL_PASSWORD=<YOUR_MYSQL_PASSWORD>
 ```
 ## Setup Instructions
 1. **Create & Activate Python Virtual Environment**:
@@ -101,6 +112,14 @@ OPENSEARCH_PASS=admin
       - Loads the search_products tool
       - Executes search with predefined query
       - Prints formatted product results
+    - For mysql product queries:
+    ```bash
+    python mysql.py
+    ```
+    - Connects to Toolbox server (http://localhost:5000)
+    - Loads the get_products_by_type tool
+    - Calls it with a product type (e.g., "jersey")
+    - Prints formatted results
 
 ## Example Outputs
 
@@ -145,3 +164,8 @@ OPENSEARCH_PASS=admin
   Brand: SWAP
   ----------------------------------------
 ```
+**mysql uqery output**:
+  ID: 1
+  Title: Opna Women's Short Sleeve Moisture
+  Type: jersey
+  Image: https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg
