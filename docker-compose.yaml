@@ -20,6 +20,8 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
   mongodb:
@@ -58,7 +60,20 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
+  redis:
+    image: redis:8.2
+    container_name: redis_mcp
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 volumes:
   mongo-data:
   mysql-data:
+  redis-data:
