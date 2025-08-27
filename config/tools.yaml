@@ -20,6 +20,10 @@ sources:
     database: ${MYSQL_DATABASE}
     user: ${MYSQL_USER}  
     password: ${MYSQL_PASSWORD}
+  my-redis:
+    kind: redis
+    address:
+       - redis_mcp:6379
 tools:
   get_user_profile:
     kind: mongodb-find-one
@@ -67,3 +71,14 @@ tools:
       - name: type
         type: string
         description: Type of product (e.g., jersey, jewelry)
+  get_user_from_redis:
+    kind: redis
+    source: my-redis
+    description: |
+      Use this tool to fetch user profile stored in Redis by email as a hash.
+    commands:
+      - [GET, user:ajay@example.com]
+    parameters:
+      - name: email
+        type: string
+        description: The email of the user to fetch from Redis
