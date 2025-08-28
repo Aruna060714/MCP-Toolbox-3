@@ -1,10 +1,11 @@
 ## MongoDB & Supabase Toolbox
-This project demonstrates how to build a MongoDB, Supabase, OpenSearch, and MySQL-backed tool system using the Toolbox framework. It allows you to query MongoDB databases, Supabase REST API, OpenSearch, and MySQL through a Toolbox server, with tools defined in a YAML configuration file (tools.yaml).
+This project demonstrates how to build a MongoDB, Supabase, OpenSearch,Redis and MySQL-backed tool system using the Toolbox framework. It allows you to query MongoDB databases, Supabase REST API, OpenSearch, and MySQL through a Toolbox server, with tools defined in a YAML configuration file (tools.yaml).
 ## Project Structure
     .
     ├── toolbox.py            # Client script that connects to Toolbox server for MongoDB queries
     ├── supabase.py           # Client script that connects to Toolbox server for Supabase queries
     ├── opensearch.py         # Client script that connects to Toolbox server for OpenSearch queries
+    ├── redis.py              # Client script that connects to Toolbox server for Redis queries
     ├── mysql.py              # Client script that connects to Toolbox server for MySQL product queries
     ├── api_opensearch.py     # FastAPI server for OpenSearch product search
     ├── tools.yaml            # Toolbox configuration (sources + tools for MongoDB, Supabase, OpenSearch, MySQL)
@@ -15,6 +16,7 @@ This project demonstrates how to build a MongoDB, Supabase, OpenSearch, and MySQ
 - **Supabase**: Stores product data with REST API endpoints
 - **OpenSearch**: Provides search capabilities for product data via FastAPI
 - **MySQL**: Stores product details, allows fetching products by type
+- **redis** : connects to Toolbox server for Redis queries 
 
 ## Available Tools
 1. **get_user_profile**: Query MongoDB for user profiles by email address
@@ -22,6 +24,7 @@ This project demonstrates how to build a MongoDB, Supabase, OpenSearch, and MySQ
 3. **get_product_by_barcode**: Fetch product details from Supabase by barcode
 4. **search_products**: Search products in OpenSearch by title, category, or description
 5. **get_products_by_type**: Query MySQL to fetch products by their type
+6. **get_user_from_redis** : Fetch user profile from Redis by email
 
 ## Workflow Overview
 1. MongoDB stores user data, Supabase stores product data
@@ -32,6 +35,7 @@ This project demonstrates how to build a MongoDB, Supabase, OpenSearch, and MySQ
 6. opensearch.py → connects to Toolbox server for OpenSearch product searches
 7. api_opensearch.py → FastAPI server that interfaces with OpenSearch
 8. mysql.py → connects to Toolbox server for MySQL product queries
+9. redis.py → stores user profiles.
 
 ## Environment Variables (.env file)
 Create a `.env` file in the project root with the following variables:
@@ -56,6 +60,10 @@ MYSQL_PORT=3306
 MYSQL_DATABASE=
 MYSQL_USER=
 MYSQL_PASSWORD=<YOUR_MYSQL_PASSWORD>
+
+#Redis Configuration
+REDIS_HOST=
+REDIS_PORT=
 ```
 ## Setup Instructions
 1. **Create & Activate Python Virtual Environment**:
@@ -116,10 +124,18 @@ MYSQL_PASSWORD=<YOUR_MYSQL_PASSWORD>
     ```bash
     python mysql.py
     ```
-    - Connects to Toolbox server (http://localhost:5000)
-    - Loads the get_products_by_type tool
-    - Calls it with a product type (e.g., "jersey")
-    - Prints formatted results
+      - Connects to Toolbox server (http://localhost:5000)
+      - Loads the get_products_by_type tool
+      - Calls it with a product type (e.g., "jersey")
+      - Prints formatted results
+    - For redis user queries:
+    ```bash
+    python redis.py
+    ```
+      - Connects to Toolbox server (http://localhost:5000)
+      - Loads the get_user_from_redis tool
+      - Calls it with an email (e.g., "ajay@example.com")
+      - Prints the user profile stored in Redis (as JSON)
 
 ## Example Outputs
 
@@ -169,3 +185,8 @@ MYSQL_PASSWORD=<YOUR_MYSQL_PASSWORD>
   Title: Opna Women's Short Sleeve Moisture
   Type: jersey
   Image: https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg
+
+**redis output**:
+  Loading tool: get_user_from_redis
+  Executing tool with email: ajay@example.com
+  User profile from Redis: ["{\"email\": \"ajay@example.com\", \"name\": \"Ajay\", \"age\": 30, \"role\": \"designer\"}"]
